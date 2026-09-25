@@ -1,0 +1,9 @@
+# Identificacao didatica de uma amostra de quartzo.
+mineral pedra {
+    dureza = 7
+    densidade = 2.65
+    cor = "incolor"
+    brilho = "vitreo"
+}
+
+identificar pedra
