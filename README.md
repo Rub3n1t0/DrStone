@@ -62,6 +62,22 @@ Na raiz do projeto, execute um programa `.stone` com:
 python -m drstone.main examples/quartzo.stone
 ```
 
+Tambem e possivel informar as propriedades diretamente na linha de comando:
+
+```text
+python -m drstone.main --dureza 7 --densidade 2.65 --brilho vitreo --cor incolor
+```
+
+O nome da amostra e `amostra` por padrao. Para altera-lo, use `--nome`:
+
+```text
+python -m drstone.main --nome pedra --dureza 7 --densidade 2.65
+```
+
+O modo direto aceita qualquer combinacao com ao menos uma das propriedades
+`--dureza`, `--densidade`, `--cor` e `--brilho`. Ele utiliza o mesmo fluxo de
+analise do arquivo `.stone`.
+
 ## Fluxo
 
 ```text

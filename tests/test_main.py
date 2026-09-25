@@ -6,7 +6,7 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-from drstone.main import execute_file, main
+from drstone.main import execute_file, execute_source, main
 
 
 class MainTest(unittest.TestCase):
@@ -28,6 +28,67 @@ class MainTest(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         self.assertIn("Quartzo", stdout.getvalue())
         self.assertEqual(stderr.getvalue(), "")
+
+    def test_executes_source_through_complete_pipeline(self) -> None:
+        output = execute_source('''mineral amostra {
+    dureza = 7
+    densidade = 2.65
+}
+
+identificar amostra''')
+
+        self.assertIn("Analisando: amostra", output)
+        self.assertIn("Mineral mais compatível:\nQuartzo", output)
+
+    def test_cli_accepts_properties_directly(self) -> None:
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+
+        with redirect_stdout(stdout), redirect_stderr(stderr):
+            exit_code = main(
+                [
+                    "--nome",
+                    "pedra",
+                    "--dureza",
+                    "7",
+                    "--densidade",
+                    "2.65",
+                    "--brilho",
+                    "vitreo",
+                ]
+            )
+
+        self.assertEqual(exit_code, 0)
+        self.assertIn("Analisando: pedra", stdout.getvalue())
+        self.assertIn("Mineral mais compatível:\nQuartzo", stdout.getvalue())
+        self.assertEqual(stderr.getvalue(), "")
+
+    def test_cli_requires_file_or_direct_property(self) -> None:
+        stderr = io.StringIO()
+
+        with redirect_stderr(stderr):
+            exit_code = main([])
+
+        self.assertEqual(exit_code, 2)
+        self.assertIn("informe um arquivo .stone ou ao menos uma propriedade", stderr.getvalue())
+
+    def test_cli_rejects_file_mixed_with_direct_properties(self) -> None:
+        stderr = io.StringIO()
+
+        with redirect_stderr(stderr):
+            exit_code = main(["examples/quartzo.stone", "--dureza", "7"])
+
+        self.assertEqual(exit_code, 2)
+        self.assertIn("não ambos", stderr.getvalue())
+
+    def test_cli_applies_semantic_validation_to_direct_properties(self) -> None:
+        stderr = io.StringIO()
+
+        with redirect_stderr(stderr):
+            exit_code = main(["--dureza", "11"])
+
+        self.assertEqual(exit_code, 1)
+        self.assertIn("dureza deve estar entre 1 e 10", stderr.getvalue())
 
     def test_reports_missing_file_without_traceback(self) -> None:
         stderr = io.StringIO()
