@@ -1,3 +1,10 @@
+Ana Luiza S.     | RA: 046249
+Kauan Santos     | RA: 201454
+Riglei Marcos    | RA: 061703
+Rubens Bolognesi | RA: 043771
+Vagner Pires     | RA: 146738
+
+
 # DrStone
 
 DrStone e um projeto academico de uma pequena linguagem de programacao voltada
